@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcards App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { color: #333; }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      width: 320px;
+    }
+    input, textarea, button {
+      width: 90%;
+      margin: 5px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    #review-card { display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>My Flashcards</h1>
+
+  <!-- Add Flashcard -->
+  <div class="card">
+    <h2>Add Flashcard</h2>
+    <input type="text" id="word" placeholder="Enter Word">
+    <textarea id="meaning" placeholder="Enter Meaning"></textarea>
+    <button onclick="addFlashcard()">Add Card</button>
+  </div>
+
+  <!-- Review Flashcards -->
+  <div class="card" id="review-card">
+    <h2>Review</h2>
+    <p id="front"></p>
+    <button onclick="showAnswer()">Show Answer</button>
+    <p id="back" style="display:none; font-weight:bold;"></p>
+    <br>
+    <button onclick="nextCard()">Next</button>
+  </div>
+
+  <button onclick="startReview()">Start Review</button>
+
+  <script>
+    let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+    let currentIndex = 0;
+
+    function addFlashcard() {
+      const word = document.getElementById('word').value.trim();
+      const meaning = document.getElementById('meaning').value.trim();
+      if(word && meaning){
+        flashcards.push({word, meaning});
+        localStorage.setItem('flashcards', JSON.stringify(flashcards));
+        alert("Flashcard Added!");
+        document.getElementById('word').value = '';
+        document.getElementById('meaning').value = '';
+      }
+    }
+
+    function startReview(){
+      if(flashcards.length === 0){
+        alert("No flashcards yet!");
+        return;
+      }
+      document.getElementById('review-card').style.display = "block";
+      currentIndex = 0;
+      showCard();
+    }
+
+    function showCard(){
+      document.getElementById('front').innerText = flashcards[currentIndex].word;
+      document.getElementById('back').innerText = flashcards[currentIndex].meaning;
+      document.getElementById('back').style.display = "none";
+    }
+
+    function showAnswer(){
+      document.getElementById('back').style.display = "block";
+    }
+
+    function nextCard(){
+      currentIndex = (currentIndex + 1) % flashcards.length;
+      showCard();
+    }
+  </script>
+
+</body>
+</html>
